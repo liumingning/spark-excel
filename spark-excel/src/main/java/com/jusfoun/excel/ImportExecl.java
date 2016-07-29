@@ -11,6 +11,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -51,8 +53,6 @@ public class ImportExecl {
 
     /**
      * @描述：得到总行数
-     * @作者：建宁
-     * @时间：2012-08-29 下午16:27:15
      * @参数：@return
      * @返回值：int
      */
@@ -65,8 +65,6 @@ public class ImportExecl {
 
     /**
      * @描述：得到总列数
-     * @作者：建宁
-     * @时间：2012-08-29 下午16:27:15
      * @参数：@return
      * @返回值：int
      */
@@ -79,8 +77,6 @@ public class ImportExecl {
 
     /**
      * @描述：得到错误信息
-     * @作者：建宁
-     * @时间：2012-08-29 下午16:27:15
      * @参数：@return
      * @返回值：String
      */
@@ -93,8 +89,6 @@ public class ImportExecl {
 
     /**
      * @描述：验证excel文件
-     * @作者：建宁
-     * @时间：2012-08-29 下午16:27:15
      * @参数：@param filePath　文件完整路径
      * @参数：@return
      * @返回值：boolean
@@ -167,18 +161,15 @@ public class ImportExecl {
             /** 调用本类提供的根据流读取的方法 */
 
             /** 读取本地文件用这个 */
-//			File file = new File(filePath);
+			File file = new File(filePath);
 
-//			is = new FileInputStream(file);
+			is = new FileInputStream(file);
 
 
             /** 读取hdfs上文件用这个 */
-            FileSystem fs = FileSystem.get(URI.create(filePath), new Configuration());
-
-            InputStream in = null;
-
-
-            is = fs.open(new Path(filePath));
+//            FileSystem fs = FileSystem.get(URI.create(filePath), new Configuration());
+//            InputStream in = null;
+//            is = fs.open(new Path(filePath));
 
             dataLst = read(is, isExcel2003);
 
@@ -359,10 +350,11 @@ public class ImportExecl {
         // List<List<String>> list = poi.read("d:/aaa.xls");
 
 
-        List<List<String>> list = poi.read("c:/book.xlsx");
+//        List<List<String>> list = poi.read("c:/book.xlsx");
 //        List<List<String>> list = poi.read("C:\\jusfoun\\9fc59872109ac694_1462948162231.xlsx");
-//        String string = "hdfs://192.168.4.203:8020/upload/temp/jusfoun/dataaccess/9fc59872109ac694/69cb4324c2674ba1ac306461c7e00c09/9fc59872109ac694_1462948162231.xlsx";
-//        List<List<String>> list = poi.read(string);
+//        String string = "hdfs://192.168.4.202:8020/upload/temp/jusfoun/dataaccess/9fc59872109ac694/69cb4324c2674ba1ac306461c7e00c09/9fc59872109ac694_1462948162231.xlsx";
+        String string="C:\\jusfoun\\userinfo.xls";
+        List<List<String>> list = poi.read(string);
 
         if (list != null) {
 

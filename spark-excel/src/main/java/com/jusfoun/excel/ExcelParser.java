@@ -27,33 +27,49 @@ public class ExcelParser {
     public String parseExcelData(InputStream is) {
         try {
             HSSFWorkbook workbook = new HSSFWorkbook(is);
-            HSSFSheet sheet = workbook.getSheet("0");
+            HSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
+            currentString = new  StringBuilder() ;
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 Iterator<Cell> cellIterator = row.cellIterator();
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-                    switch (cell.getCellType()) {
-                        case Cell.CELL_TYPE_BOOLEAN:
-                            bytesRead++;
-                            currentString.append(cell.getBooleanCellValue() + "\t");
-                            break;
-                        case Cell.CELL_TYPE_NUMERIC:
-                            bytesRead++;
-                            currentString.append(cell.getNumericCellValue() + "\t");
-                            break;
-                        case Cell.CELL_TYPE_STRING:
-                            bytesRead++;
-                            currentString.append(cell.getStringCellValue() + "\t");
-                            break;
+                    if (null!=cell) {
+                        switch (cell.getCellType()) {
+                            case Cell.CELL_TYPE_BOOLEAN: // Boolean
+                                bytesRead++;
+                                currentString.append(cell.getBooleanCellValue() + "\t");
+                                break;
+                            case Cell.CELL_TYPE_NUMERIC:  // 数字
+                                bytesRead++;
+                                currentString.append(cell.getNumericCellValue() + "\t");
+                                break;
+                            case Cell.CELL_TYPE_STRING:  // 字符串
+                                bytesRead++;
+                                currentString.append(cell.getStringCellValue() + "\t");
+                                break;
+                            case Cell.CELL_TYPE_FORMULA:
+                                currentString.append(cell.getCellFormula() + "\t");
+                                break;
+                            case Cell.CELL_TYPE_BLANK:   // 空白字符
+                                currentString.append("" + "\t");
+                                break;
+                            case Cell.CELL_TYPE_ERROR:   //  错误
+                                currentString.append("非法字符" + "\t");
+                                break;
+                            default:
+                                currentString.append("未知类型" + "\t");
+                                break;
+                        }
                     }
+
                 }
                 currentString.append("\n");
             }
             is.close();
         } catch (IOException e) {
-            logger.error("IO Exception : File not found "+e);
+            logger.error("IO Exception : File not found " + e);
         }
         return currentString.toString();
     }
