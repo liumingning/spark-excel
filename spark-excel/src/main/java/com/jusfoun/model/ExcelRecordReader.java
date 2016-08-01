@@ -68,6 +68,7 @@ public class ExcelRecordReader extends RecordReader<LongWritable, Text> {
         } else {
             if (key.get() < (this.strArrayofLines.length - 1)) {
                 long pos = (int) key.get();
+
                 key.set(pos + 1);
                 value.set(this.strArrayofLines[(int) (pos + 1)]);
                 pos++;

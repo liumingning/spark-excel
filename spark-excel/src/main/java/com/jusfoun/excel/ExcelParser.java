@@ -50,15 +50,19 @@ public class ExcelParser {
                                 currentString.append(cell.getStringCellValue() + "\t");
                                 break;
                             case Cell.CELL_TYPE_FORMULA:
+                                bytesRead++;
                                 currentString.append(cell.getCellFormula() + "\t");
                                 break;
-                            case Cell.CELL_TYPE_BLANK:   // 空白字符
+                            case Cell.CELL_TYPE_BLANK:
+                                bytesRead++;// 空白字符
                                 currentString.append("" + "\t");
                                 break;
-                            case Cell.CELL_TYPE_ERROR:   //  错误
+                            case Cell.CELL_TYPE_ERROR:
+                                bytesRead++;//  错误
                                 currentString.append("非法字符" + "\t");
                                 break;
                             default:
+                                bytesRead++;
                                 currentString.append("未知类型" + "\t");
                                 break;
                         }

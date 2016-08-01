@@ -75,7 +75,7 @@ public class ExcelContactCount extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
         Configuration conf = new Configuration();// 配置文件对象
-        Path mypath = new Path(args[1]);
+        Path mypath = new Path(args[0]);
         FileSystem hdfs = mypath.getFileSystem(conf);// 创建输出路径
         if (hdfs.isDirectory(mypath)) {
             hdfs.delete(mypath, true);
@@ -102,8 +102,7 @@ public class ExcelContactCount extends Configured implements Tool {
     }
 
     public static void main(String[] args) throws Exception {
-        String[] args0 = { "hdfs://192.168.0.4:8030/excel/phone.xls",
-                "hdfs://192.168.0.4:8030/excel/result/" };
+        String[] args0 = {"hdfs://192.168.4.202:8020/hsw/testExcel.xls","hdfs://192.168.4.202:8020/hsw/result"};
         int ec = ToolRunner.run(new Configuration(), new ExcelContactCount(), args0);
         System.exit(ec);
     }
