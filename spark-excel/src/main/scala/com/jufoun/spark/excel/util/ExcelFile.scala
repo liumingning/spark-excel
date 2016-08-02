@@ -13,14 +13,14 @@ import org.apache.spark.rdd.RDD
 private[excel] object ExcelFile {
   val DEFAULT_INDENT="  "
   val DEFAULT_ROW_SEPARATOR="\n"
-  val DEFAULT_CHARSET="utf-8"
+  val DEFAULT_CHARSET=Charset.forName("UTF-8")
 
   def withCharset(
     context:SparkContext,
     location:String,
-    charset:String=DEFAULT_CHARSET):RDD[String]={
+    charset:String="utf-8"):RDD[String]={
     context.hadoopConfiguration.set(ExcelInputFormat.ENCODING_KEY,charset)
-    if (Charset.forName(charset)==Charset.forName(ExcelOptions.DEFAULT_CHARSET)) {
+    if (Charset.forName(charset)==DEFAULT_CHARSET) {
       context.newAPIHadoopFile(location,
         classOf[ExcelInputFormat],
         classOf[LongWritable],

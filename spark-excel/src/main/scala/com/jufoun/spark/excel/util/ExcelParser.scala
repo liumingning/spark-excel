@@ -2,6 +2,7 @@ package com.jufoun.spark.excel.util
 
 import java.io.InputStream
 
+import com.jufoun.spark.excel.ExcelOptions
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Cell
 import org.slf4j.LoggerFactory
@@ -39,31 +40,31 @@ object ExcelParser {
           cell.getCellType match {
             case Cell.CELL_TYPE_BOOLEAN => {
               bytesRead += 1
-              currntString.append(cell.getBooleanCellValue + "\t")
+              currntString.append(cell.getBooleanCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
             case Cell.CELL_TYPE_NUMERIC => {
               bytesRead += 1
-              currntString.append(cell.getNumericCellValue + "\t")
+              currntString.append(cell.getNumericCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
             case Cell.CELL_TYPE_STRING => {
               bytesRead += 1
-              currntString.append(cell.getStringCellValue + "\t")
+              currntString.append(cell.getStringCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
             case Cell.CELL_TYPE_FORMULA => {
               bytesRead += 1
-              currntString.append(cell.getCellFormula + "\t")
+              currntString.append(cell.getCellFormula + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
             case Cell.CELL_TYPE_BLANK => {
               bytesRead += 1
-              currntString.append("" + "\t")
+              currntString.append("" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
             case Cell.CELL_TYPE_ERROR => {
               bytesRead += 1
-              currntString.append("非法字符" + "\t")
+              currntString.append("非法字符" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
             case _ => {
               bytesRead += 1
-              currntString.append("未知类型" + "\t")
+              currntString.append("未知类型" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
             }
           }
         }
