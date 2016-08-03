@@ -11,7 +11,9 @@ object ReExcel {
     val conf=new SparkConf().setAppName("read excel").setMaster("local[*]")
     val sc=new SparkContext(conf)
     val sqlContext=new SQLContext(sc)
-    val filePath: String = "hdfs://192.168.4.202:8020/hsw/testExcel.xls"
+//    val filePath: String = "hdfs://192.168.4.202:8020/hsw/testExcel.xls"
+//    val filePath: String = "hdfs://192.168.4.202:8020/hsw/jusfounDatafuse.xls"
+    val filePath: String = "hdfs://192.168.4.202:8020/hsw/jusfounDatafuse.xlsx"
 
     val excelDF=sqlContext.excelFile(filePath)
     excelDF.printSchema()

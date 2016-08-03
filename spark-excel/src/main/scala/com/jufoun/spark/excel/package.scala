@@ -18,12 +18,18 @@ package object excel {
   implicit class ExcelContext(sqlContext:SQLContext) extends Serializable{
     def excelFile(
                    filePath:String,
-                   useHeader: Boolean = true,//是否把第一行当作结构去解析
-                   delimiter: Char = ',',//默认分隔符
-                   mode: String = "PERMISSIVE",//解析方式
-                   charset: String = ExcelFile.DEFAULT_CHARSET.name(),// 字符编码
-                   inferSchema: Boolean = true//是否进行类型推断
+                   useHeader: Boolean = ExcelOptions.DEFAULT_USE_HEADER,//是否把第一行当作结构去解析
+                   delimiter: Char = ExcelOptions.DEFAULT_FIELD_DELIMITER.charAt(0),//默认分隔符
+                   mode: String = ExcelOptions.DEFAULT_PARSE_MODE,//解析方式
+                   charset: String = ExcelOptions.DEFAULT_CHARSET,// 字符编码
+                   inferSchema: Boolean = ExcelOptions.DEFAULT_INFERSCHEMA//是否进行类型推断
                  ):DataFrame={
+
+/*//      把excelFile的输入参数放入Map对象中.parameters里面包含所有的参数
+      val parameters=Map(
+        "delimiter"->delimiter.toString
+)*/
+
       val excelRelation=ExcelRelation(
         ()=>ExcelFile.withCharset(sqlContext.sparkContext,filePath,charset),
         location= Some(filePath),

@@ -3,8 +3,7 @@ package com.jufoun.spark.excel
 import java.io.InputStream
 import java.nio.charset.Charset
 
-import com.jufoun.spark.excel.util.ExcelParser
-import com.jusfoun.model.ExcelRecordReader
+import com.jufoun.spark.excel.util.{ExcelParser, JudegExcelUtil}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Seekable
 import org.apache.hadoop.io.compress._
@@ -36,6 +35,7 @@ private[excel] class ExcelRecordReader extends RecordReader[LongWritable, Text] 
 
   val logger = LoggerFactory.getLogger("ExcelRecordReader.class")
 
+  private var isExcel2003=true
   private var currentKey: LongWritable = _
   private var currentValue: Text = _
 
@@ -60,9 +60,22 @@ private[excel] class ExcelRecordReader extends RecordReader[LongWritable, Text] 
 
     // open the file and seek to the start of the split
     val path = fileSplit.getPath
-    val fs = path.getFileSystem(conf)
-    val fsin = fs.open(fileSplit.getPath)
-    strArrayofLine = ExcelParser.parseExcelData(fsin)
+    val filePath=path.toString
+    logger.warn("filePath: "+filePath)
+    JudegExcelUtil.isExcelFile(filePath)
+//    验证文件的合法性
+    if (!JudegExcelUtil.isExcelFile(filePath)) {
+      logger.error("the file is not a excel file.the system will exit in a minute")
+      sys.exit()
+    }
+      logger.warn("判断后是execl文件")
+      val fs = path.getFileSystem(conf)
+      val fsin = fs.open(fileSplit.getPath)
+      if (JudegExcelUtil.isExcel2007(filePath)) {
+        isExcel2003=false
+      }
+      strArrayofLine = ExcelParser.parseExcelData(fsin,isExcel2003)
+
 
     /*val codec=new CompressionCodecFactory(conf).getCodec(path)
     if (null!=codec) {

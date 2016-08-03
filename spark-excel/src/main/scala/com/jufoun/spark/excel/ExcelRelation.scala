@@ -216,14 +216,12 @@ case class ExcelRelation protected[excel](
         ).parseLine(firstLine)
       //      是否把第一行当作结构
       val header = if (useHeader) {
-        logger.warn("*******************把第一行当作结构*****************")
         firstRow
       } else {
         firstRow.zipWithIndex.map { case (value, index) => s"C$index" }
       }
 //      对字段进行类型推断
       if (this.inferExcelSchema) {
-        logger.warn("***************对字段进行推断***************")
         val simpleDateFormatter=dateFormatter
         InferSchema(tokenRdd(header),header,nullValue,simpleDateFormatter)
       }else{

@@ -1,5 +1,7 @@
 package com.jufoun.spark.excel
 
+import java.nio.charset.Charset
+
 import com.jufoun.spark.excel.util.ParserLibs
 
 /**
@@ -10,9 +12,6 @@ private[excel] class ExcelOptions(@transient private val parameters: Map[String,
   val samplingRatio = parameters.get("samplingRatio").map(_.toDouble).getOrElse(1.0)
 
   val delimiter=parameters.getOrElse("delimiter",",")
-  val quote=parameters.getOrElse("quote","\"")
-  val escape=parameters.getOrElse("escape","null")
-  val comment=parameters.getOrElse("comment","#")
   val mode=parameters.getOrElse("mode","PERMISSIVE")
   val header=parameters.getOrElse("header","false")
   val parserLib=parameters.getOrElse("parserLib",ParserLibs.DEFAULT)
@@ -32,6 +31,10 @@ private[excel] object ExcelOptions {
   val DEFAULT_NULL_VALUE = ""
   val DEFAULT_CHARSET = "UTF-8"
   val DEFAULT_FIELD_DELIMITER=","
+  val DEFAULT_PARSE_MODE="PERMISSIVE"
+  val DEFAULT_USE_HEADER=true
+  val DEFAULT_INFERSCHEMA=true
+  val DEFAULT_SHEET_NUMBER=1
 
   def apply(parameters: Map[String, String]): ExcelOptions = new ExcelOptions(parameters)
 }

@@ -4,7 +4,8 @@ import java.io.InputStream
 
 import com.jufoun.spark.excel.ExcelOptions
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.{Cell, Workbook}
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.slf4j.LoggerFactory
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer, StringBuilder}
@@ -22,15 +23,18 @@ object ExcelParser {
   private val logger = LoggerFactory.getLogger(ExcelParser.getClass)
   private var currntString: StringBuilder = _
   private var bytesRead = 0
-
-  def parseExcelData(is: InputStream): Array[String] = {
-    val resultList=new ListBuffer[String]()
-
-    val workbook = new HSSFWorkbook(is)
-    val sheet = workbook.getSheetAt(0)
+  private var workbook: Workbook=null
+  def parseExcelData(is: InputStream,isExcel2003:Boolean): Array[String] = {
+    val resultList = new ListBuffer[String]()
+    if (isExcel2003) {
+      workbook=new HSSFWorkbook(is)
+    }else{
+      workbook=new XSSFWorkbook(is)
+    }
+    val sheet = workbook.getSheetAt(ExcelOptions.DEFAULT_SHEET_NUMBER)
     val rowIterator = sheet.iterator()
     while (rowIterator.hasNext) {
-    currntString = new StringBuilder()
+      currntString = new StringBuilder()
       val row = rowIterator.next()
       val cellIterator = row.cellIterator()
       while (cellIterator.hasNext) {
