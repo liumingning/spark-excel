@@ -1,6 +1,8 @@
 package com.jufoun.spark
 
+import com.jufoun.spark.excel.util.ExcelFile
 import org.apache.hadoop.io.compress.CompressionCodec
+import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SQLContext}
 
 import scala.collection.Map
@@ -14,13 +16,24 @@ package object excel {
     * 运用隐士类的特性，给sqlContext类增加xmlFile方法
     */
   implicit class ExcelContext(sqlContext:SQLContext) extends Serializable{
-    def ExcelFile(filePath:String):DataFrame={
-
-      //      把xmlFile的输入参数放入Map对象中.parameters里面含有所有需要的参数
-      val parameters=Map(
-        "path"->filePath
-      )
-      ???
+    def excelFile(
+                   filePath:String,
+                   useHeader: Boolean = true,//是否把第一行当作结构去解析
+                   delimiter: Char = ',',//默认分隔符
+                   mode: String = "PERMISSIVE",//解析方式
+                   charset: String = ExcelFile.DEFAULT_CHARSET.name(),// 字符编码
+                   inferSchema: Boolean = true//是否进行类型推断
+                 ):DataFrame={
+      val excelRelation=ExcelRelation(
+        ()=>ExcelFile.withCharset(sqlContext.sparkContext,filePath,charset),
+        location= Some(filePath),
+        useHeader=useHeader,
+        delimiter=delimiter,
+        parseMode= mode,
+        treatEmptyValuesAsNulls=true,
+        inferExcelSchema = inferSchema
+      )(sqlContext)
+      sqlContext.baseRelationToDataFrame(excelRelation)
 
     }
 

@@ -77,9 +77,9 @@ val comment = parameters.getOrElse("comment", "#")
     } else {
       throw new Exception("Comment marker cannot be more than one character.")
     }
-
+*/
 //    获取解析的模式.permissive是解析所有的行.droppmalformed删除不匹配的行
-    val parseMode = parameters.getOrElse("mode", "PERMISSIVE")*/
+    val parseMode = parameters.getOrElse("mode", "PERMISSIVE")
 
 //    获取header,判断是否把第一行数据当成结构,默认是false
     val useHeader = parameters.getOrElse("header", "false")
@@ -91,32 +91,6 @@ val comment = parameters.getOrElse("comment", "#")
       throw new Exception("Header flag can be true or false")
     }
 
-/*//    获取用哪个解析库
-    val parserLib = parameters.getOrElse("parserLib", ParserLibs.DEFAULT)
-
-//
-    val ignoreLeadingWhiteSpace = parameters.getOrElse("ignoreLeadingWhiteSpace", "false")
-    val ignoreLeadingWhiteSpaceFlag = if (ignoreLeadingWhiteSpace == "false") {
-      false
-    } else if (ignoreLeadingWhiteSpace == "true") {
-      if (!ParserLibs.isUnivocityLib(parserLib)) {
-        throw new Exception("Ignore whitesspace supported for Univocity parser only")
-      }
-      true
-    } else {
-      throw new Exception("Ignore white space flag can be true or false")
-    }
-    val ignoreTrailingWhiteSpace = parameters.getOrElse("ignoreTrailingWhiteSpace", "false")
-    val ignoreTrailingWhiteSpaceFlag = if (ignoreTrailingWhiteSpace == "false") {
-      false
-    } else if (ignoreTrailingWhiteSpace == "true") {
-      if (!ParserLibs.isUnivocityLib(parserLib)) {
-        throw new Exception("Ignore whitespace supported for the Univocity parser only")
-      }
-      true
-    } else {
-      throw new Exception("Ignore white space flag can be true or false")
-    }
     val treatEmptyValuesAsNulls = parameters.getOrElse("treatEmptyValuesAsNulls", "false")
     val treatEmptyValuesAsNullsFlag = if (treatEmptyValuesAsNulls == "false") {
       false
@@ -128,7 +102,7 @@ val comment = parameters.getOrElse("comment", "#")
 
 
 //    是否推断类型,默认是false
-*/
+
 val charset = parameters.getOrElse("charset",ExcelFile.DEFAULT_CHARSET.name() )
     // TODO validate charset?
     val inferSchema = parameters.getOrElse("inferSchema", "false")
@@ -162,6 +136,8 @@ val charset = parameters.getOrElse("charset",ExcelFile.DEFAULT_CHARSET.name() )
       Some(path),
       headerFlag,
       delimiter,
+      parseMode,
+      treatEmptyValuesAsNullsFlag,
       schema,
       inferSchemaFlag,
       codec,
