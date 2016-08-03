@@ -228,7 +228,6 @@ case class ExcelRelation protected[excel](
         InferSchema(tokenRdd(header),header,nullValue,simpleDateFormatter)
       }else{
 //        不对类型进行类型推断，那么默认就都是StringType类型
-        logger.warn("***************不对字段进行推断***************")
         val schemaFields=header.map{fieldName=>
         StructField(fieldName.toString,StringType,nullable=true)}
       StructType(schemaFields)
@@ -248,25 +247,21 @@ case class ExcelRelation protected[excel](
   private def tokenRdd(header:Array[String]):RDD[Array[String]]={
 
     val filterLine= if (useHeader) firstLine else null
-    logger.warn("需要过滤的行(第一行) "+filterLine)
 
 //    如果设置了header,在发送到其他的executors之前确保第一行已经序列化过了
     baseRDD().mapPartitions{iter=>
     val excelIter= if (useHeader) {
-      logger.warn("进来过滤了,过滤掉与第一行相同数据的行")
       iter.filter(_!=filterLine)
     }else{
-      logger.warn("不需要进行过滤")
       iter
     }
-      parseEXCEL(iter)
+      parseEXCEL(excelIter)
     }
   }
 
 //  把每一行的String内容,分割后把每个字段存储到Array中了
   private def parseEXCEL(iter:Iterator[String]):Iterator[Array[String]]={
     iter.flatMap {line=>
-      logger.warn("excel的每一行 "+line)
       val delimiter=ExcelOptions.DEFAULT_FIELD_DELIMITER
       val records=line.split(delimiter).toList
 
