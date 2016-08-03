@@ -33,6 +33,7 @@ private[excel] object InferSchema {
 
   private def inferRowType(nullValue:String,dateFormatter:SimpleDateFormat)
                           (rowSoFar:Array[DataType],next:Array[String]):Array[DataType]={
+    ???
 
   }
 
