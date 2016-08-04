@@ -13,11 +13,15 @@ object ReExcel {
     val sqlContext=new SQLContext(sc)
 //    val filePath: String = "hdfs://192.168.4.202:8020/hsw/testExcel.xls"
 //    val filePath: String = "hdfs://192.168.4.202:8020/hsw/jusfounDatafuse.xls"
-    val filePath: String = "hdfs://192.168.4.202:8020/hsw/jusfounDatafuse.xlsx"
+//    val filePath: String = "hdfs://192.168.4.202:8020/hsw/jusfounDatafuse.xlsx"
+    val filePath: String = "hdfs://192.168.4.202:8020/hsw/allSheet.xlsx"
 
+//    val excelDF=sqlContext.excelFile(filePath,sheetNum="1",isAllSheet = "true",inferSchema=true)
     val excelDF=sqlContext.excelFile(filePath)
     excelDF.printSchema()
     excelDF.show()
+    excelDF.registerTempTable("user")
+    sqlContext.sql("select name from user").show()
     sc.stop()
 
   }

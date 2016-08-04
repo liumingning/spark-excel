@@ -5,6 +5,7 @@ import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.sources.{BaseRelation, CreatableRelationProvider, RelationProvider, SchemaRelationProvider}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
+import org.slf4j.LoggerFactory
 
 /**
   * Created by HuShiwei on 2016/8/2 0002.
@@ -17,6 +18,8 @@ class DefaultSource
   extends RelationProvider
     with SchemaRelationProvider
     with CreatableRelationProvider {
+  private val logger = LoggerFactory.getLogger("DefaultSource===")
+
 
   private def checkPath(parameters: Map[String, String]): String = {
     parameters.getOrElse("path", sys.error("'path' must be specified for EXCEL data."))
@@ -45,39 +48,10 @@ class DefaultSource
     //检查路径
     val path=checkPath(parameters)
 
+    logger.warn("====================================="+parameters.toString())
 //    获取分隔符
     val delimiter=TypeCast.toChar(parameters.getOrElse("delimiter",","))
 
-/*//    获取引用的符号,默认是".
-    val quote=parameters.getOrElse("quote","\"")
-    val quoteChar:Character= if (quote==null) {
-      null
-    }else if(quote.length==1) {
-      quote.charAt(0)
-    }else{
-      throw new Exception("Quotation cannot be more than one character.")
-    }
-
-//    获取escape,默认是null
-    val escape=parameters.getOrElse("escape",null)
-    val escapeChar:Character= if (escape==null) {
-      null
-    }else if (escape.length==1) {
-      escape.charAt(0)
-    }else{
-      throw new Exception("Escape character cannot be more than one character.")
-    }
-
-//    如果是这个符号开始的就跳过这一行.这个符号默认是#
-val comment = parameters.getOrElse("comment", "#")
-    val commentChar: Character = if (comment == null) {
-      null
-    } else if (comment.length == 1) {
-      comment.charAt(0)
-    } else {
-      throw new Exception("Comment marker cannot be more than one character.")
-    }
-*/
 //    获取解析的模式.permissive是解析所有的行.droppmalformed删除不匹配的行
     val parseMode = parameters.getOrElse("mode", "PERMISSIVE")
 
@@ -132,7 +106,7 @@ val charset = parameters.getOrElse("charset",ExcelFile.DEFAULT_CHARSET.name() )
       * 剩下的参数,都是为了给这个普通的RDD赋予schema.最后成为一个DataFrame
       */
     ExcelRelation(
-      () => ExcelFile.withCharset(sqlContext.sparkContext, path, charset),
+      () => ExcelFile.withCharset(sqlContext.sparkContext, path,parameters, charset),
       Some(path),
       headerFlag,
       delimiter,

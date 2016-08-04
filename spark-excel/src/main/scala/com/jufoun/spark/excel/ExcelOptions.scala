@@ -11,7 +11,10 @@ private[excel] class ExcelOptions(@transient private val parameters: Map[String,
 
   val samplingRatio = parameters.get("samplingRatio").map(_.toDouble).getOrElse(1.0)
 
-  val delimiter=parameters.getOrElse("delimiter",",")
+  val sheetNumm=parameters.getOrElse("sheetNumm",ExcelOptions.DEFAULT_SHEET_NUMBER)
+  val isAllSheet=parameters.getOrElse("isAllSheet",ExcelOptions.DEFAULT_ALL_SHEET)
+  val delimiter=parameters.getOrElse("delimiter",ExcelOptions.DEFAULT_FIELD_DELIMITER)
+
   val mode=parameters.getOrElse("mode","PERMISSIVE")
   val header=parameters.getOrElse("header","false")
   val parserLib=parameters.getOrElse("parserLib",ParserLibs.DEFAULT)
@@ -34,7 +37,8 @@ private[excel] object ExcelOptions {
   val DEFAULT_PARSE_MODE="PERMISSIVE"
   val DEFAULT_USE_HEADER=true
   val DEFAULT_INFERSCHEMA=true
-  val DEFAULT_SHEET_NUMBER=1
+  val DEFAULT_SHEET_NUMBER="1"
+  val DEFAULT_ALL_SHEET="false"
 
   def apply(parameters: Map[String, String]): ExcelOptions = new ExcelOptions(parameters)
 }

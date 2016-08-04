@@ -22,64 +22,99 @@ import scala.collection.mutable.{ArrayBuffer, ListBuffer, StringBuilder}
 object ExcelParser {
   private val logger = LoggerFactory.getLogger(ExcelParser.getClass)
   private var currntString: StringBuilder = _
-  private var bytesRead = 0
   private var workbook: Workbook=null
-  def parseExcelData(is: InputStream,isExcel2003:Boolean): Array[String] = {
+  def parseExcelData(is: InputStream,isExcel2003:Boolean,sheetNum:Int=ExcelOptions.DEFAULT_SHEET_NUMBER.toInt,isAllSheet:Boolean=true): Array[String] = {
     val resultList = new ListBuffer[String]()
+//    判断是哪一种excel
     if (isExcel2003) {
       workbook=new HSSFWorkbook(is)
     }else{
       workbook=new XSSFWorkbook(is)
     }
-    val sheet = workbook.getSheetAt(ExcelOptions.DEFAULT_SHEET_NUMBER)
-    val rowIterator = sheet.iterator()
-    while (rowIterator.hasNext) {
-      currntString = new StringBuilder()
-      val row = rowIterator.next()
-      val cellIterator = row.cellIterator()
-      while (cellIterator.hasNext) {
 
-        val cell = cellIterator.next()
-        if (null != cell) {
-          cell.getCellType match {
-            case Cell.CELL_TYPE_BOOLEAN => {
-              bytesRead += 1
-              currntString.append(cell.getBooleanCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
-            }
-            case Cell.CELL_TYPE_NUMERIC => {
-              bytesRead += 1
-              currntString.append(cell.getNumericCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
-            }
-            case Cell.CELL_TYPE_STRING => {
-              bytesRead += 1
-              currntString.append(cell.getStringCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
-            }
-            case Cell.CELL_TYPE_FORMULA => {
-              bytesRead += 1
-              currntString.append(cell.getCellFormula + ExcelOptions.DEFAULT_FIELD_DELIMITER)
-            }
-            case Cell.CELL_TYPE_BLANK => {
-              bytesRead += 1
-              currntString.append("" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
-            }
-            case Cell.CELL_TYPE_ERROR => {
-              bytesRead += 1
-              currntString.append("非法字符" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
-            }
-            case _ => {
-              bytesRead += 1
-              currntString.append("未知类型" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+    if (!isAllSheet) {
+      val sheet = workbook.getSheetAt(sheetNum)
+      val rowIterator = sheet.iterator()
+      while (rowIterator.hasNext) {
+        currntString = new StringBuilder()
+        val row = rowIterator.next()
+        val cellIterator = row.cellIterator()
+        while (cellIterator.hasNext) {
+
+          val cell = cellIterator.next()
+          if (null != cell) {
+            cell.getCellType match {
+              case Cell.CELL_TYPE_BOOLEAN => {
+                currntString.append(cell.getBooleanCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
+              case Cell.CELL_TYPE_NUMERIC => {
+                currntString.append(cell.getNumericCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
+              case Cell.CELL_TYPE_STRING => {
+                currntString.append(cell.getStringCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
+              case Cell.CELL_TYPE_FORMULA => {
+                currntString.append(cell.getCellFormula + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
+              case Cell.CELL_TYPE_BLANK => {
+                currntString.append("" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
+              case Cell.CELL_TYPE_ERROR => {
+                currntString.append("非法字符" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
+              case _ => {
+                currntString.append("未知类型" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+              }
             }
           }
         }
+        resultList.append(currntString.toString())
       }
-      resultList.append(currntString.toString())
+    }else {
+      val shelltIt = workbook.sheetIterator()
+      while (shelltIt.hasNext) {
+        val sheet = shelltIt.next()
+        val rowIterator = sheet.iterator()
+        while (rowIterator.hasNext) {
+          currntString = new StringBuilder()
+          val row = rowIterator.next()
+          val cellIterator = row.cellIterator()
+          while (cellIterator.hasNext) {
+
+            val cell = cellIterator.next()
+            if (null != cell) {
+              cell.getCellType match {
+                case Cell.CELL_TYPE_BOOLEAN => {
+                  currntString.append(cell.getBooleanCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+                case Cell.CELL_TYPE_NUMERIC => {
+                  currntString.append(cell.getNumericCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+                case Cell.CELL_TYPE_STRING => {
+                  currntString.append(cell.getStringCellValue + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+                case Cell.CELL_TYPE_FORMULA => {
+                  currntString.append(cell.getCellFormula + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+                case Cell.CELL_TYPE_BLANK => {
+                  currntString.append("" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+                case Cell.CELL_TYPE_ERROR => {
+                  currntString.append("非法字符" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+                case _ => {
+                  currntString.append("未知类型" + ExcelOptions.DEFAULT_FIELD_DELIMITER)
+                }
+              }
+            }
+          }
+          resultList.append(currntString.toString())
+        }
+
+      }
     }
+
     is.close()
     return resultList.toArray
   }
-  def getBytesRead={
-    bytesRead
-  }
-
 }

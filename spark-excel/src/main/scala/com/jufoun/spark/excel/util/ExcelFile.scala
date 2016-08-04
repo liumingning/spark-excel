@@ -18,8 +18,14 @@ private[excel] object ExcelFile {
   def withCharset(
     context:SparkContext,
     location:String,
+    parameters:Map[String,String],
     charset:String="utf-8"):RDD[String]={
+    val options=ExcelOptions(parameters)
     context.hadoopConfiguration.set(ExcelInputFormat.ENCODING_KEY,charset)
+    context.hadoopConfiguration.set(ExcelInputFormat.EXCEL_SHEET_NUMBER,options.sheetNumm)
+    context.hadoopConfiguration.set(ExcelInputFormat.EXCEL_ALLSHEET,options.isAllSheet)
+    context.hadoopConfiguration.set(ExcelInputFormat.DEFAULT_FIELD_DELIMITER,options.delimiter)
+
     if (Charset.forName(charset)==DEFAULT_CHARSET) {
       context.newAPIHadoopFile(location,
         classOf[ExcelInputFormat],

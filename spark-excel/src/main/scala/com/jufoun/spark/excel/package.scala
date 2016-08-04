@@ -18,6 +18,8 @@ package object excel {
   implicit class ExcelContext(sqlContext:SQLContext) extends Serializable{
     def excelFile(
                    filePath:String,
+                   sheetNum:String=ExcelOptions.DEFAULT_SHEET_NUMBER,//解析第几个sheet页
+                   isAllSheet:String=ExcelOptions.DEFAULT_ALL_SHEET,//是否解析所有的sheet页
                    useHeader: Boolean = ExcelOptions.DEFAULT_USE_HEADER,//是否把第一行当作结构去解析
                    delimiter: Char = ExcelOptions.DEFAULT_FIELD_DELIMITER.charAt(0),//默认分隔符
                    mode: String = ExcelOptions.DEFAULT_PARSE_MODE,//解析方式
@@ -25,13 +27,15 @@ package object excel {
                    inferSchema: Boolean = ExcelOptions.DEFAULT_INFERSCHEMA//是否进行类型推断
                  ):DataFrame={
 
-/*//      把excelFile的输入参数放入Map对象中.parameters里面包含所有的参数
+//      把excelFile的输入参数放入Map对象中.parameters里面包含所有的参数
       val parameters=Map(
-        "delimiter"->delimiter.toString
-)*/
+        "delimiter"->delimiter.toString,
+        "sheetNumm"->sheetNum,
+        "isAllSheet"->isAllSheet
+      )
 
       val excelRelation=ExcelRelation(
-        ()=>ExcelFile.withCharset(sqlContext.sparkContext,filePath,charset),
+        ()=>ExcelFile.withCharset(sqlContext.sparkContext,filePath,parameters.toMap,charset),
         location= Some(filePath),
         useHeader=useHeader,
         delimiter=delimiter,

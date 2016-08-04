@@ -28,6 +28,9 @@ class ExcelInputFormat extends TextInputFormat {
 
 object ExcelInputFormat {
   val ENCODING_KEY: String = "excelinput.encoding"
+  val EXCEL_SHEET_NUMBER:String="excelsheet.number"
+  val EXCEL_ALLSHEET:String="excel.allsheet"
+  val DEFAULT_FIELD_DELIMITER:String="excel.fielddelimiter"
 
 }
 
@@ -36,6 +39,8 @@ private[excel] class ExcelRecordReader extends RecordReader[LongWritable, Text] 
   val logger = LoggerFactory.getLogger("ExcelRecordReader.class")
 
   private var isExcel2003=true
+  private var isAllSheetFlag:Boolean=_
+  private var sheetNum:Int=_
   private var currentKey: LongWritable = _
   private var currentValue: Text = _
 
@@ -55,10 +60,15 @@ private[excel] class ExcelRecordReader extends RecordReader[LongWritable, Text] 
     }
     val charset =
       Charset.forName(conf.get(ExcelInputFormat.ENCODING_KEY, ExcelOptions.DEFAULT_CHARSET))
+    val sheet=conf.get(ExcelInputFormat.EXCEL_SHEET_NUMBER)
+    val isAllSheet=conf.get(ExcelInputFormat.EXCEL_ALLSHEET)
+    sheetNum=sheet.toInt
+    isAllSheetFlag=isAllSheet.toBoolean
+    logger.warn("open excel sheet number is: "+sheetNum)
     start = fileSplit.getStart
     end = start + fileSplit.getLength
 
-    // open the file and seek to the start of the split
+//    打开文件并且找到这个split分片的起始位置
     val path = fileSplit.getPath
     val filePath=path.toString
     logger.warn("filePath: "+filePath)
@@ -74,7 +84,7 @@ private[excel] class ExcelRecordReader extends RecordReader[LongWritable, Text] 
       if (JudegExcelUtil.isExcel2007(filePath)) {
         isExcel2003=false
       }
-      strArrayofLine = ExcelParser.parseExcelData(fsin,isExcel2003)
+      strArrayofLine = ExcelParser.parseExcelData(fsin,isExcel2003,sheetNum,isAllSheetFlag)
 
 
     /*val codec=new CompressionCodecFactory(conf).getCodec(path)

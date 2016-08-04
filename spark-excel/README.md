@@ -85,3 +85,4 @@ trait SchemaRelationProvider {
       schema: StructType): BaseRelation
 }
 ```
+
