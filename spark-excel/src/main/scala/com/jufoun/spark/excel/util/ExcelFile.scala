@@ -38,5 +38,4 @@ private[excel] object ExcelFile {
         classOf[Text]).map(pair => new String(pair._2.getBytes, 0, pair._2.getLength, charset))
     }
   }
-
 }

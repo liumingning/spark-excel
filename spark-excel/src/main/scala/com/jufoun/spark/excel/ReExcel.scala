@@ -16,8 +16,8 @@ object ReExcel {
 //    val filePath: String = "hdfs://192.168.4.202:8020/hsw/jusfounDatafuse.xlsx"
     val filePath: String = "hdfs://192.168.4.202:8020/hsw/allSheet.xlsx"
 
-//    val excelDF=sqlContext.excelFile(filePath,sheetNum="1",isAllSheet = "true",inferSchema=true)
-    val excelDF=sqlContext.excelFile(filePath)
+    val excelDF=sqlContext.excelFile(filePath,sheetNum="1",isAllSheet = "true",inferSchema=true)
+//    val excelDF=sqlContext.excelFile(filePath)
     excelDF.printSchema()
     excelDF.show()
     excelDF.registerTempTable("user")
